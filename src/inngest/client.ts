@@ -1,3 +1,3 @@
 import {Inngest} from "inngest";
-
-export const inngest=new Inngest({id:"tibebcraft"});
+import { sentryMiddleware } from "@inngest/middleware-sentry";
+export const inngest=new Inngest({id:"tibebcraft",middleware:[sentryMiddleware()]});
