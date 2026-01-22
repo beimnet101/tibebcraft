@@ -8,6 +8,9 @@ import { minimap } from "../extentions/minimap";
 
 import {indentationMarkers} from "@replit/codemirror-indentation-markers";
 import { customSetup } from "../extentions/custom-setup";
+import { suggestion } from "../extentions/suggestion";
+import { quickEdit } from "../extentions/quick-edit";
+import { selectionTooltip } from "../extentions/selection-tooltip";
 
 
 interface Props{
@@ -32,6 +35,9 @@ export const CodeEditor = ({fileName,intialValue="",onChange}:Props) => {
         LanguageExtension,
         oneDark,
         customTheme,
+        suggestion(fileName),
+        quickEdit(fileName),
+        selectionTooltip(),
         keymap.of([indentWithTab]),
         minimap(),
         indentationMarkers(),

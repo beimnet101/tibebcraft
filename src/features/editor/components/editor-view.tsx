@@ -1,4 +1,4 @@
-import { act, use, useRef } from "react";
+import { act, use, useEffect, useRef } from "react";
 import { Id } from "../../../../convex/_generated/dataModel"
 import { useEditor } from "../hooks/use-editor";
 import { FileBreadcrumbs } from "./file-breadcrums";
@@ -18,6 +18,17 @@ export const EditorView = ({
       const timeoutRef=useRef<NodeJS.Timeout|null>(null);
       const isActiveFileBinary=activeFile && activeFile.storageId;
       const isActiveFileText=activeFile&&!activeFile.storageId;
+    useEffect(
+      ()=>{
+        return()=>{
+          if(timeoutRef.current){
+            clearTimeout(timeoutRef.current);
+          }}
+      }
+      
+      ,[activeTabId]);
+
+    
       return(
         <div className="h-full flex flex-col">
             <div className="flex items-center">
