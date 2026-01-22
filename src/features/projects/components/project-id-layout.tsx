@@ -8,7 +8,7 @@ const MAX_SIDEBAR_WIDTH = 800;
 const DEFAULT_CONVERSATION_SIDEBAR_WIDTH = 400;
 const DEFAULT_MAIN_SIZE = 1000;
 
-import "allotment/dist/style.css";
+import { ConversationSidebar } from "@/features/conversations/components/conversation-sidebar";
 export const ProjectIdLayout=({
 
   children,
@@ -38,10 +38,7 @@ return (
          preferredSize={DEFAULT_CONVERSATION_SIDEBAR_WIDTH}
 
         >
-         <div>
-            Conversation SideBar
-
-         </div>
+           <ConversationSidebar projectId={projectId}/>
         </Allotment.Pane>
     <Allotment.Pane>
     {children}
