@@ -32,8 +32,10 @@ import { Conversation,ConversationContent,ConversationScrollButton } from "@/com
      useMessages
 
     } from "../hooks/use-conversation";
-import { DEFAULT_CONVERSATION_TITLE } from "../../../../convex/constants";
-import { ms } from "date-fns/locale";
+
+import { PastConversationsDialog } from "./past-convesation-dialog";
+import { DEFAULT_CONVERSATION_TITLE } from "../constant";
+
 
 interface ConversationSidebarProps{
     projectId:Id<"projects">;
@@ -44,6 +46,7 @@ export const ConversationSidebar=({
 }:ConversationSidebarProps)=>{
     const[input,setInput]=useState("");
     const[selectedConversationId,setselectedConversationId]=useState<Id<"conversations">|null>(null);
+    const[PastConversationsOpen,setPastConversationsOpen]=useState(false);
     const createConversation=useCreateConversation();
     const conversations=useConversations(projectId);
     const activeConversationId=
@@ -55,7 +58,16 @@ export const ConversationSidebar=({
      const isProcessing=conversationMessages?.some(
         (msg)=>msg.status==="processing"
      );
-
+    const handleCancel=async()=>
+      {
+        try{
+        await ky.post("/api/messages/cancel",{
+          json:{projectId}
+        })
+        }catch{
+          toast.error("unable to cancel request")
+        }
+      }
     
     const handleCreateConversation=async()=>{
         try{
@@ -71,6 +83,7 @@ export const ConversationSidebar=({
     }
     const handleSubmit=async(message:PromptInputMessage)=>{
        if(isProcessing &&!message.text){
+           await handleCancel();
         setInput("");
         return;
        }
@@ -100,6 +113,14 @@ export const ConversationSidebar=({
 
 
 return(
+  <>
+     <PastConversationsDialog
+      projectId={projectId}
+      open={PastConversationsOpen}
+      onOpenChange={setPastConversationsOpen}
+      onSelect={setselectedConversationId}
+     
+     />
     <div className="flex flex-col h-full bg-sidebar">
         <div className="h-8.75 flex items-center justify-between border-b">
 
@@ -110,6 +131,7 @@ return(
             <Button
             size="icon-xs"
             variant="highlight"
+            onClick={()=>setPastConversationsOpen(true)}
             >
                 <HistoryIcon className="size-3.5"/>
             </Button>
@@ -137,7 +159,11 @@ return(
                         <LoaderIcon className="size-4 animate-spin"/>
                          <span>Thinking....</span>
                     </div>
-                ):(
+                ):message.status==="cancelled"?(
+
+               <span className="text-muted-foreground italic"> Request cancelled</span>
+                ):
+                (
                    <MessageResponse>{message.content}</MessageResponse>
 
                 )}
@@ -193,5 +219,6 @@ return(
           </div>
 
     </div>
+    </>
 )
 }
