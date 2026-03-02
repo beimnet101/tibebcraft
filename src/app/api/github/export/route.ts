@@ -15,7 +15,13 @@ const requestSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const { userId } = await auth();
+  const { userId ,has} = await auth();
+
+    const hasPro=has({plan: "pro"});
+  
+    if(!hasPro){
+      return NextResponse.json({ error: "Pro plan required" }, { status: 403 });
+    }
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
